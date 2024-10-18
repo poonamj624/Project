@@ -1,0 +1,28 @@
+REPORT zstudent_report.
+
+DATA : lt_Stud TYPE TABLE OF zstudent_1,
+       wa_Stud TYPE zstudent_1.
+
+CLEAR : wa_Stud.
+
+wa_Stud-zstudid_1 = '1'.
+wa_Stud-zsname = 'Shriansh'.
+wa_Stud-zsadd = 'Thane'.
+wa_Stud-zsdob = '11-11-2020'.
+wa_Stud-zspin = '432123'.
+wa_Stud-zstate = 'MH'.
+APPEND wa_Stud TO lt_Stud.
+
+CLEAR : wa_Stud.
+
+wa_Stud-zstudid_1 = '7'.
+wa_Stud-zsname = 'Tina'.
+wa_Stud-zsadd = 'Solapur'.
+wa_Stud-zsdob = '05-02-2012'.
+wa_Stud-zspin = '567123'.
+wa_Stud-zstate = 'MH'.
+APPEND wa_Stud TO lt_Stud.
+
+LOOP AT lt_Stud INTO wa_Stud.
+  MODIFY zstudent_1 FROM wa_Stud.
+ENDLOOP.

@@ -1,0 +1,323 @@
+pre
+appl
+DB layer
+
+
+Dev(ut/fut)---------QA(FUT)--------------------------Prod()
+				preProd(UAT)
+
+
+
+
+
+T code----SE11-----data dict
+MARA table---header table()=====MAKT(item table)
+
+SE09----transport organizer
+
+local object
+
+
+Package(tr==task req)----goes to other server(eg.QA)
+
+
+mandt----mandatory field(client dependent table) primary key compulsory
+
+TMP---local obj
+
+
+data class?  appl0,appl1,2...
+buffering not Allowed tick
+
+tech settings
+
+Extras--enhancedment--can be enha       =====
+SM30----tble maintenance
+
+Utilities---TMG             ====
+
+&NC&----without autho
+fun group---table name
+
+
+TMG/report-------> to add data in table
+
+
+without data ele/domain we can make field
+
+
+
+
+indexes(primary/secondary====like pointer)
+
+
+SE80        		
+SE38    ......abap editors
+
+
+
+{SAP codes}
+
+
+create a custom table using domain 
+
+
+
+
+
+
+tb_training
+Tread@2024BE
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+mandt-----gives client number
+technical settings-----for table creation
+
+
+Database table name--->ZSTUDENT_1
+MANDT
+ZSTUDID_1
+ZSNAME
+ZSADD
+ZSDOB
+ZSPIN
+ZSTATE
+
+ 
+Database table name--->ZCLASS
+ZCLASS
+ZSUB_ID
+ZSUB_NAME
+
+DB view--->ZSTUD_V
+
+
+
+first    utilities----table maintainance generator---(auth group=&nc&,two step...)
+then in goto SM30
+to add data to table==>utilities--table contents--create entries
+
+
+SE80 ---->for package creation
+SE11 - ABAP Dictionary ,
+SE38 - ABAP Editor ,
+SE37 - Function Builder , 
+SE24 -  Class Builder 
+SE14--
+SM12---to delete lock
+SM30--TMG[first activate table maintainance group e.g &nc&]
+st22-----to check dump
+se11
+se93-----to create Tcode
+
+structure----does not store any data-----used to take fields from multiple table
+
+0000000001
+00011
+
+search help---ZID
+&nc&----->any one can maintain that data(not check for any authorization)
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++
+[ZSTUDENT_REPORT]
+
+
+se93-----for t code
+
+
+report
+se38----only for writting programs
+se80----others also
+
+
+Report-->
+	types : classical,interactive,
+
+events--initialization
+	select---start---end
+	start of page---end of 
+	
+	
+sel screen
+sel option---for range purpose
+parameter----to give single input
+
+*internal table---to store result  like dataset in DB
+*structure:work area   --->holds only one record(place holder)--like temp ---quit easy             
+variable field symbol===like ptr
+
+
+rc--return code
+subrc
+sy--system
+obligatory ---to mAKE MANDATORY
+
+iteration purpose==>it_student_1 ----ls_stu..
+===========================================================
+ZDB_INSERT_ZTEST01
+
+
+3 types of internal tables
+	1.standard(linear)
+        2.sorted(binary search)
+        3.hashed(hashing algo)
+
+selection-screen---input
+
+ctrl+tab to see table fields
+		modify(update data or insert new record),update(data need to be exist in table)
+====================================
+work area se:  OR internal table se
+
+
+
+f5----debug next step
+
+-------------Loop at IT_Ztest int WA_TEST01--------------for iteration
+
+select single
+
+type table of----internal table
+
+work area
+	wa_
+
+
+
+
+[ZTEST05]
+internal table to DB table
+===================================================
+
+To create T code -->
+ZSTARS--for ZSTUDENT_REPORT
+{
+
+}
+
+
+ZSTUD1---for student table
+{ 
+pgm---sm30
+
+view----ZSTUDENT_1
+update---X
+}
+
+
+
+
+
+
+
+
+
+
+work area se
+==================>>>>>
+
+*&---------------------------------------------------------------------*
+*& Report ZDB_INSERT_ZTEST01
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zdb_insert_ztest01.
+
+*SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME .
+*  PARAMETERS  : p_stdid TYPE ztest01-std_id,
+*                p_name  TYPE ztest01-std_name,
+*                p_addr  TYPE ztest01-std_address.
+*SELECTION-SCREEN END OF BLOCK b1.
+*
+*DATA: it_ztest01 TYPE TABLE OF ztest01,
+*      wa_ztest01 TYPE ztest01.
+*
+*START-OF-SELECTION.
+*
+*  wa_ztest01-std_id = p_stdid.
+*  wa_ztest01-std_name = p_name.
+*  wa_ztest01-std_address = p_addr.
+*
+*  insert ztest01 FROM wa_ztest01.
+*
+*  IF sy-subrc eq 0.
+*
+*    MESSAGE 'Data enter sucessfully ' type 'S'.
+*
+*  ENDIF.s
+
+
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE text-001.
+  PARAMETERS : p_stdid TYPE zstudent_1-zstudid_1,
+               p_name  TYPE zstudent_1-zsname.
+*               p_add   TYPE zstudent_1-zsadd,
+*               p_dob   TYPE zstudent_1-zsdob,
+*               p_pin   TYPE zstudent_1-zspin,
+*               p_staTE TYPE zstudent_1-zstate.
+SELECTION-SCREEN END OF BLOCK b1.
+
+DATA: it_zstudent_1  TYPE TABLE OF zstudent_1,
+      ls_ZSTUDENT_1 TYPE zstudent_1.
+
+
+START-OF-SELECTION.
+ls_ZSTUDENT_1-zstudid_1 = p_stdid.
+ls_ZSTUDENT_1-zsname = p_name.
+*ls_ZSTUDENT_1-zsadd = p_add.
+*ls_ZSTUDENT_1-zsdob = p_dob.
+*ls_ZSTUDENT_1-zspin = P_pin.
+*ls_ZSTUDENT_1-zstate = P_State.
+
+Update  ZSTUDENT_1 FROM ls_ZSTUDENT_1.
+
+IF sy-subrc eq 0.
+
+ MESSAGE 'data Inserted !' type 'S'.
+
+ENDIF.
+
+
+================================================================
+
+
+REPORT ZTEST05.
+
+Data : it_ztest type table of  ztest01,
+      wa_ztest type ztest01.
+
+CLEAR: WA_ZTEST.
+wa_ztest-std_id = '101'.
+wa_ztest-std_name = 'Disha2'.
+wa_ztest-std_address = 'Mumbai'.
+Append  wa_ztest to it_ztest.
+
+
+CLEAR: WA_ZTEST.
+wa_ztest-std_id = '102'.
+wa_ztest-std_name = 'Nisha2'.
+wa_ztest-std_address = 'Mumbai'.
+Append  wa_ztest to it_ztest.
+
+CLEAR: WA_ZTEST.
+wa_ztest-std_id = '103'.
+wa_ztest-std_name = 'Dipali2'.
+wa_ztest-std_address = 'Mumbai'.
+Append  wa_ztest to it_ztest.
+
+*insert ztest01 from  TABLE it_ztest.
+*append ztest01 to
+*MOVE-CORRESPONDING ztest01 to  it_test.
+*IF  sy-subrc eq 0.
+*
+*ENDIF.
+
+CLEAR: WA_ZTEST.
+
+LOOP AT  IT_ZTEST INTO WA_ZTEST..
+*INSERT  ZTEST01 FROM WA_ZTEST.
+
+
+  MODIFY ZTEST01 FROM WA_ZTEST.
+
+ENDLOOP.

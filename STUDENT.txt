@@ -1,0 +1,8 @@
+100	0000000002	SHRISHA                                 	MUMBAI                                  	20181001	654321	MAHARASHTR
+100	0000000005	PRIYA                                   	Pune                                    	20240708	123123	MH
+100	0000000003	IRA                                     	PUNE                                    	20181001	124323	MH
+100	0000000004	ISHU                                    	LATUR                                   	20220702	123123	MH
+100	0000000006	RIYA                                    	Pune                                    	05-02-20	123123	MH
+100	0000000001	Shriansh                                	Thane                                   	11-11-20	432123	MH
+100	0000000007	Tina                                    	Solapur                                 	05-02-20	567123	MH
+100	0000000009	PIYA                                    	PUNE                                    	987654	987654	MH

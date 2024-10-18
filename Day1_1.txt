@@ -1,0 +1,165 @@
+SE11===>for domain/elements
+
+
+Order table		element
+	ZONUMBER11=====ZSTUD11
+	ZODATE=========ZDATE
+	ZNAME==========ZNAME
+	ZADD==========ZADD
+
+DB table====>ZSTUDENT11
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ZSID
+
+
+
+
+
+
+
+[ZTEST_forallentries]
+
+
+read with key/index
+move wa==wa,it==it
+
+h/m
+collect (do sum)
+
+is not initial==>not null
+
+
+=for reference===standard ABAP===
+
+[ZTRAINING_1]
+[ZINTE_TABLE_OPERATIONS]
+to display from it_table===>loop
+
+
+IT====into table
+wa===into
+
+
+
+Assignments==>
+write
+report tcode
+table tcode
+it operations
+display it table using write stmt
+---------------------------------------------------------
+report [ZTEST_FORALLENTRIES].
+
+
+
+
+se37---for function module
+  need fn group(related fns)
+
+
+
+[Z_PRICING_DOCUMENT_VALP_FILL]
+=============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+reusable--->
+include
+fn module(import,export,changing---pass by ref,exceptions,sr code)
+
+fn grp--->fn modules are in grp
+
+recursion
+
+
+assignment-->
+how to pass It to fn module
+
+pattern button to cl fn 
+
+[SFELL_ACCOUNT]
+[ZCALL_FM]
+
+assgn-->
+take input by selecting
+=========================================================
+include->
+-se38
+-u can not execute include program, u can only use it in other executable pgm
+-use for declaration
+-eg.  b include ZDATA
+-------------------------------------------------------
+Function Module->
+-se37
+-first need to create a fn group->se80----activate it(container for fn module->se37)
+-
+
+ZPRO1--fn group
+ZPRO1_FM---fn module
+ZPRO1_Pgm---executable pgm
+[REPORT ZPRO1_PGM]
+[ZSTUDENT_1_FM]
+==============================================================================
+
+Day-(08-07)
+
+[ZSTUDENT_ALV_GRID]
+
+ALV grid-gives more options
+ALV grid==>fn module & class
+
+[ZREPORT_ALV]
+
+top<===>like header footer
+
+
+[reuse_alv_grid_display]
+[reuse_alv_fieldcatelog_merge]
+
+Assgn->
+how to header--like top in alv grid (uid -neme-date)
+name & state-->column editable
+
+->fn module me table kaise 
+
+f5-->debug
+f7-->out of fn

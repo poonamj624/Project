@@ -1,0 +1,200 @@
+module pool-
+
+-se38
+-sceen num--9000 start
+
+process before output ===select screen
+process after input-->actual logic
+t code-93
+
+set pf-status--->menu bar elements
+
+same data type
+variable===ele
+
+sy-ucomm---->hodes code()
+-----------------
+[ZTRAINING_MODULE_POOL]
+
+-navigation bet screen
+
+first screen---table fields--read only
+create button(disable to enable)  submit btn
+
+2 screen ---put id   get btn--->output
+
+
+=================================
+[ZSTUDENT_MP1]
+
+fn code --STUDENT
+
+shift+f2
+
+--------------
+200
+fn code -- GET
+
+
+T code---TSTUD11
+
+https://www.youtube.com/watch?v=hBy35HXOd0Y&list=PLM3lhmHjSeITYl3Jz1dx1l0faMUsik8lV&index=6
+
+
+
+
+
+
+
+
+
+===========================================================================
+oop->
+
+fn group-se80
+fn module-se37
+report-se38
+to display table-se11
+
+classes->se24-to create global classes
+	->usual abap class-to write the logic
+	->
+local class--se38
+	define & implement [use same name for both]
+	[ZDB_LOCAL_CLASS]
+
+[ZDB_OOPS_ALV]-->inbuilt class-->cl_salv_table
+
+-only globle m,ethods can call th' pattern
+
+
+	
+method-->
+	static
+	instance
+
+
+[CL_SALV_TABLE]
+
+
+program->
+[ZALV_TRAINIG]
+t code-->zalv
+
+why we class if we have fn module
+
+
+alv-grid--
+
+-screen
+-costom controller
+--------------------------------------------------------------------------
+file-->
+
+BDC--sceen record kr kr pgm create keta hain
+[ZFILE_TRAINING]
+presentation-->
+GUI_UPLOAD
+GUI_DOWNLOAD
+
+app layer-->
+	dataset
+
+
+db layer-->
+
+
+to fetch frm db--->it table
+
+ 
+
+Assignment-->
+  module pool  => report-->selection screen    file path  radio button-- read/write  presention/appln     ----alv grid me display
+
+
+MP-->	[ZSTUDENT_MP2]
+	t code---ZSTUD22
+Reports-->
+	ZFILE_PRESENT
+	ZFILE_APPLICATION
+
+al11--->to see file downloaded on application layer
+
+
+
+
+[ZSTUDENT_MP22]
+[ZMP22]
+=================================================================================================
+
+before bapi --->bdc(screen recording--if any field not recorded then dump) so bapi
+
+hana db--fast
+ecc db--
+
+
+bapi-->
+se37
+[bapi_salesorder_createfromdata2]
+
+fn module:
+	-normal
+	-update
+	-
+
+return--->commit/rollback
+
+update std tables only th' bapi
+
+
+va01-->to create sales order
+
+va21-->display mode
+====================================
+badi--> 
+-- multiple methods r there
+--se18      
+
+[cl_exithandler]--std class 
+
+badi implimetation class and then we can use---by inheritance
+
+oo enhancement tech
+============================
+badi
+
+1-classicle badi
+2-filter badi
+
+se18--display
+se19-->imply
+
+single use
+multi use ---bapies
+
+badi name---impli---imply class-->logic inside
+===================================================================  
+
+Odata-->
+
+data model
+t code---segw
+create project--entity set( like it)   type---like (wa)
+
+for every table
+ generate-->4 classes gets created(crud)
+
+entity--1 record
+entity set--n record
+
+code in dpc
+
+sap gateway/postman
+======================================
+cds---view have some restrict so
+
+hana db
+@--to desc
+
+
+association---lazy join 
