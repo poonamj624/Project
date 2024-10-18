@@ -1,0 +1,688 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Navbar from "./Navbar";
+import Footer from "./Footer";
+import LoadingComponent from "./LoadingComponent";
+import { ToastContainer } from "react-bootstrap";
+import { BsClipboard2Plus, BsFillCheckCircleFill, BsFillXCircleFill, BsCurrencyRupee, BsSortUp, BsFillArrowDownCircleFill, BsFillCaretDownFill, BsFillArrowLeftCircleFill, BsFillFunnelFill, BsDownload, BsRepeat, BsArrowRight, BsFilter, BsArrowRepeat, BsChevronLeft, BsChevronRight, BsPencil, BsSearch, BsXCircleFill } from "react-icons/bs";
+import { Form, Button, Col, Row } from 'react-bootstrap';
+import FetchData from "./FetchData";
+import { MultiSelect } from "react-multi-select-component";
+import { cloneDeep, countBy } from 'lodash';
+import { FaUpload, FaArrowUp, FaAngleLeft, FaMusic, FaAngleRight, FaFilter, FaFileUpload, FaEdit, FaFileExport, FaPlus } from "react-icons/fa"
+import { Table, Modal, InputGroup } from 'react-bootstrap';
+import { FaCircleCheck } from "react-icons/fa6";
+import { getPopoverUtilityClass } from '@mui/material';
+
+
+const UserRoleGrid = () => {
+
+
+    //objects
+    const createId = () => {
+        let id = "";
+        let chars =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (let i = 0; i < 5; i++) {
+            id += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return id;
+    };
+
+    const user_data_object = {
+        ud_id: "",
+        id: createId(),
+        email: "",
+        roles: []
+    }
+    const [products, setProducts] = useState([]);
+    const [Page, setPage] = useState("");
+    const [recordsPerPage, setRecordsPerPage] = useState("10");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [recordsCount, setRecordsCount] = useState(0);
+    const [loading, setLoading] = useState(false); //Loader
+    //Total number of page (for pagination)
+    const totalPages = Math.ceil(recordsCount / recordsPerPage);
+    const userRoleJSON = localStorage.getItem('role')
+    const userRole = JSON.parse(userRoleJSON)
+    const [showAdd, setShowAdd] = useState(false); // Add modal state
+    const [email, setemail] = useState("");
+    const [password, setPassword] = useState("");
+    const [roles, setRoles] = useState([]);
+    // Modal open/close handlers
+    const handleShowAdd = () => setShowAdd(true);
+    const handleCloseAdd = () => setShowAdd(false);
+    let [roleArray, setRoleArray] = useState([])
+    const [selectedFilter, setSelectedFilter] = useState([{ label: '', value: '' }]);
+    const [search_value, setSearchValue] = useState("");
+
+    const [checkboxStates, setCheckboxStates] = useState({});
+
+    const initialFormData = {
+        email: '',
+        password: '',
+        roles: []
+    };
+
+    const [formData, setFormData] = useState(initialFormData);
+    const [errors, setErrors] = useState({});
+    const [isFormValid, setIsFormValid] = useState(false);
+    const [touchedFields, setTouchedFields] = useState({});
+    const [checkedStates, setCheckedStates] = useState({});
+    const [registered_user, setRegistered_user] = useState([user_data_object])
+    // const roleArray = [
+    //     { label: "Song Inputter", value: "song inputter" },
+    //     { label: "Song Approver", value: "song approver" },
+    //     { label: "Song Checker", value: "song checker" },
+    //     { label: "Member Inputter", value: "member inputter" },
+    //     { label: "Member Approver", value: "member approver" },
+    //     { label: "Member Checker", value: "member checker" },
+    //     { label: "Cleansing Checker", value: "cleansing checker" },
+    //     { label: "Cleansing Approver", value: "cleansing approver" },
+    //     { label: "Cleansing Inputter", value: "cleansing inputter" },
+    //     { label: "Admin", value: "admin" }
+    // ];
+
+    //display all records count
+
+
+    useEffect(() => {
+        handleUserRole(roleArray, search_value, currentPage, recordsPerPage)
+    }, []);
+
+    //Function to avoid continuous API calls
+    // const debounce = (func, waitFor) => {
+    //     let timeout = null;
+
+    //     const debounced = (...args) => {
+    //         if (timeout !== null) {
+    //             clearTimeout(timeout);
+    //             timeout = null;
+    //         }
+    //         timeout = setTimeout(() => func(...args), waitFor);
+    //     };
+
+    //     return debounced;
+    // };
+
+
+    const handleUserRole = async (roleArray, search_value, currentPage, recordsPerPage) => {
+
+        setLoading(true);
+        const current_page = encodeURIComponent(currentPage)
+        const searchValue = encodeURIComponent(search_value);
+        const endpoint = `${"get_all_users_data/"}?param1=${searchValue}&param2=${current_page}&param3=${recordsPerPage}`
+
+        try {
+            const token = localStorage.getItem('token');
+            // Fetch data from the API
+            const response = await FetchData(endpoint, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `${token}`, // Correct format for token
+                },
+            });
+
+            const products = await response;
+            // Simulating with dummy data for testing
+            // const products = { data: dummyUsers }; // for dummy data
+            const roleArray = Object.keys(products.data[0].roles[0]).map(role => ({
+                role: role,
+                permission: role
+            }));
+            setRoleArray(roleArray);
+            console.log("role array", roleArray)
+
+            const updated_data = products.data.map((rows) => ({
+                ...rows,
+                roles: Object.entries(rows.roles[0]).map(([role, permission]) => ({
+                    row_id: createId(),
+                    user_role: role,
+                    permission: permission
+                }))
+            }));
+
+            if (products.data.length === 0) {
+                setLoading(false);
+                setProducts([]);
+            } else {
+                let getProduct = updated_data.map((row) => ({
+                    ...row,
+                    id: createId(),
+                }));
+                // setRoleArray(getProduct); // Set role array with the returned data
+                setCurrentPage(currentPage);
+
+                setRecordsCount(products.count);
+                setPage(currentPage);
+                setLoading(false);
+                setSearchValue("");
+                setRecordsPerPage(recordsPerPage)
+                setRegistered_user(getProduct)
+
+                let startingSerialNumber = ((currentPage - 1) * recordsPerPage) + 1;
+                let productsWithSerialNumbers = getProduct.map((data, index) => ({
+                    SR_NO: startingSerialNumber + index,
+                    ...data
+                }));
+                setRegistered_user(productsWithSerialNumbers);
+                if (searchValue === "") {
+                    setSearchValue("");
+                    var name = document.getElementById('search_text');
+                    name.value = "";
+                }
+            }
+        } catch (error) {
+            // Handle errors during fetch
+            console.error('Error fetching updated role', error);
+            setLoading(false); // Ensure loading state is reset on error
+        }
+    };
+
+
+    const handleUpdateRole = async (UD_ID, email, roles) => {
+
+        const roleValues = roles
+            .filter(roleObj => Object.values(roleObj)[0])
+            .map(roleObj => Object.keys(roleObj)[0]);
+
+        const payload = { UD_ID, email, roleValues };
+        console.log("Payload:", payload);
+        setLoading(true);
+        const endpoint = "update_users_data/";
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await FetchData(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `${token}`,
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const products = await response;
+            console.log("products:", products);
+
+            if (!products.data || products.data.length === 0) {
+                setProducts([]);
+            } else {
+                let getProduct = products.data.map((row) => ({
+                    ...row,
+                    id: createId(),
+                }));
+                setProducts(getProduct);
+                setPage(currentPage);
+            }
+
+            setLoading(false);
+        } catch (error) {
+            console.error('Error registering user:', error);
+            setLoading(false);  // Reset loading state on error
+        }
+    };
+
+
+    const handleRegister = async (email, password, roles) => {
+
+        const roleValues = roles.map(role => role.value);
+        const payload = { email, password, roleValues };
+        setLoading(true);
+        const endpoint = "register/";
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await FetchData(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `${token}`,
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const products = response;
+            if (!products.data || products.data.length === 0) {
+                setProducts([]);
+            } else {
+                let getProduct = products.data.map((row) => ({
+                    ...row,
+                    id: createId(),
+                }));
+                // setRoleArray(getProduct);
+                setProducts(getProduct);
+                setPage(currentPage);
+            }
+
+            setLoading(false);
+        } catch (error) {
+            console.error('Error registering user:', error);
+            setLoading(false); // Reset loading state on error
+        }
+    };
+
+
+    const goToPage = (page, type) => {
+        if (type === "set") {
+            setPage(page)
+        }
+        else {
+            if (page !== "") {
+                const parsed_page = parseInt(page)
+                const parsed_total_page = parseInt(totalPages)
+                console.log("tatal pages", totalPages)
+                // setSelectAll(false);
+                setCurrentPage(1);
+                if (page > totalPages) {
+                    handleUserRole(roleArray, search_value, parsed_total_page, recordsPerPage);
+                    setPage(totalPages);
+                }
+                else {
+                    handleUserRole(roleArray, search_value, parsed_page, recordsPerPage);
+                    setPage(page)
+                }
+            }
+            else {
+                setPage()
+            }
+        }
+    };
+
+
+    const changeRecordsPerPage = (value) => {
+        setRecordsPerPage(value)
+        if (Page === totalPages) {
+            handleUserRole(roleArray, search_value, 1, value);
+        }
+        else {
+            handleUserRole(roleArray, search_value, Page, value)
+        }
+    }
+
+
+    //Set the value enter in text free search box
+    const getProductsValue = (value) => {
+        setSearchValue(value)
+    }
+
+
+    useEffect(() => {
+        const validateForm = () => {
+            let valid = true;
+            const newErrors = {};
+
+            if (!formData.email.trim() || formData.email.length < 3) {
+                newErrors.email = 'email must be at least 3 characters long.';
+                valid = false;
+            }
+
+            // if (!/^.{8,}$/.test(formData.password)) {
+            //     newErrors.password = 'Password should be at least 8 characters long.';
+            //     valid = false;
+            // }
+
+            if (formData.roles.length === 0) {
+                newErrors.roles = 'Please select at least one role.';
+                valid = false;
+            }
+
+            setErrors(newErrors);
+            setIsFormValid(valid);
+        };
+
+        validateForm();
+    }, [formData]);
+
+    const handleChange = (name, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value
+
+        }));
+        setTouchedFields((prev) => ({
+            ...prev,
+            [name]: true
+        }));
+    };
+
+
+
+    const handleBlur = (field) => {
+        setTouchedFields((prev) => ({ ...prev, [field]: true }));
+    };
+
+
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+
+        if (isFormValid) {
+            await handleRegister(formData.email, formData.password, formData.roles);
+
+            setFormData(initialFormData);
+            setTouchedFields({});
+            setIsFormValid(false);
+
+            handleCloseAdd();
+            handleUserRole(roleArray, search_value, currentPage, recordsPerPage);
+        }
+    };
+
+
+
+
+    // Save the current checked states to user roles
+    const saveCheckedStatesToRoles = () => {
+        setRegistered_user((prevUsers) =>
+            prevUsers.map((user) => {
+
+                const userCheckedStates = checkedStates[user.email] || {};
+                const updatedRoles = roleArray
+                    .filter((role) => userCheckedStates[role.value] === true)
+                    .map((role) => role.value);
+
+                return {
+                    ...user,
+                    roles: updatedRoles,
+                };
+            })
+        );
+    };
+
+
+
+    const handleCheckboxChange = (rowId, userEmail, roleValue, ids) => {
+        const updated_data = registered_user.map((row) =>
+            row.id === rowId ? {
+                ...row,
+                roles: row.roles.map((role, index) =>
+                    index === ids ? {
+                        ...role,
+                        permission: !role.permission
+                    } : role
+                )
+            } : row
+        );
+
+        setRegistered_user(updated_data);
+    };
+
+    const sendEditedData = (user_id) => {
+        let updated_data = registered_user.filter((row) => row.ud_id === user_id);
+        let checked_product = updated_data[0].roles.map((rows) => ({
+            [rows.user_role]: rows.permission
+        }));
+
+        let updated_user = {
+            ...updated_data[0],
+            roles: checked_product
+        };
+
+        console.log(updated_user);
+
+        handleUpdateRole(updated_user.ud_id, updated_user.email, updated_user.roles);
+    };
+
+
+
+
+    return (
+        <>
+            {loading && <LoadingComponent />
+            }
+            <div className='non-printable'>  <Navbar /></div>
+            <main className="flex-shrink-0">
+                <div class="container-fluid px-5 py-3">
+                    <div className="non-printable">
+                        <section>
+
+                            {/* <div> */}
+                            <div className="container-fluid px-1">
+                                <h1 className="display-6 mb-4">User Role Grid</h1>
+                            </div>
+                            {/* <div style={{ textAlign: "right" }}>
+                                <p className="mb-1">Records:{recordsCount}</p>
+                            </div> */}
+                            {/* </div> */}
+
+                        </section>
+                        <section>
+                            <div className="card">
+
+                                <div className="card-header bg-transparent">
+                                    <div className='row'>
+                                        <div className='col'>
+                                            <ul className="nav nav-pills card-header-pills float-end my-2 d-flex flex-wrap justify-content-end mx-2">
+
+
+                                                <li className='nav-item'>
+                                                    <div className="input-group">
+
+                                                        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                                                            <div style={{ position: 'relative' }}>
+                                                                <i className="pi pi-search" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '0.5rem' }} />
+                                                                <Form.Control
+                                                                    id="search_text"
+                                                                    type="text"
+                                                                    placeholder="Free Text Search"
+                                                                    onChange={(e) => getProductsValue(e.target.value)}
+                                                                    style={{ paddingLeft: '2rem' }}
+
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="input-group-append">
+                                                            <button className="search btn idp-btn-outline-primary mx-1 search_button" type="button" onClick={() => handleUserRole(roleArray, search_value, currentPage, recordsPerPage)} >Search</button>
+                                                            <button className="search btn idp-btn-outline-primary mx-1 search_button" type="button" onClick={() => handleUserRole(roleArray, "", currentPage, recordsPerPage)} >Clear</button>
+
+                                                            {(userRole.includes("song inputter") || userRole.includes("admin")) &&
+                                                                // <div className='file file--upload pt-1'>
+
+                                                                <button className="btn btn-primary idp-btn-primary mx-1" onClick={handleShowAdd} type="button" ><FaPlus />Add</button>
+
+                                                                // </div>
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="card-body">
+                                    <div className="table-responsive">
+                                        <table className="table table-hover table-song-list" width="100%" style={{ border: "1px solid #ccc" }}>
+                                            <thead>
+                                                <tr>
+                                                    <th className='text-capitalize'>Sr. No</th>
+                                                    <th className='text-capitalize'>User</th>
+                                                    {roleArray.map((role) => (
+                                                        <th className="text-capitalize checkbox-column" key={role.permission}>{role.role}</th>
+                                                    ))}
+                                                    <th></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {registered_user.map((user, index) => (
+                                                    <tr className='icon-column' key={index}>
+                                                        <td>{user.SR_NO}</td>
+                                                        <td>{user.email}</td>
+
+                                                        {user.roles.map((row, index) => (
+                                                            <td key={row.role} style={{ width: "100px", textAlign: "-webkit-center" }}>
+                                                                <input
+                                                                    type="checkbox"
+
+                                                                    checked={
+                                                                        (row.permission === true)
+                                                                    }
+
+                                                                    style={{ width: "20px", height: "20px" }}
+                                                                    className="custom-checkbox"
+                                                                    onChange={() => handleCheckboxChange(user.id, user.email, row.value, index)} // Handle checkbox state change
+                                                                />
+                                                            </td>
+                                                        ))}
+
+                                                        <td className='display-edit position-sticky'><FaCircleCheck style={{ color: "FF304F" }} 
+                                                            size={24}
+                                                            onClick={() => sendEditedData(user.ud_id)} title="Edit" /></td>
+
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+                                </div>
+
+
+
+                                <div className="card" width="100px">
+                                    <nav aria-label="Page navigation example">
+
+                                        <ul className="pagination m-0">
+                                            <li className='text-left me-1'>
+                                                <div className='input-group'>
+                                                    <div className="input-group-append span-border">
+                                                        <span className="input-group-text">Records per page:</span>
+                                                    </div>
+
+                                                    <div>
+                                                        <Form.Select aria-label="Default select example"
+                                                            placeholder="Records per page:"
+                                                            onChange={(e) => changeRecordsPerPage(e.target.value)}
+                                                            value={recordsPerPage}
+                                                        >
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="30">30</option>
+                                                            <option value="40">40</option>
+                                                            <option value="50">50</option>
+                                                            <option value="60">60</option>
+                                                            <option value="70">70</option>
+                                                            <option value="80">80</option>
+                                                            <option value="90">90</option>
+                                                            <option value="100">100</option>
+                                                        </Form.Select>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <button className={`page-item round-button ${Page === 1 ? 'disabled' : ''}`} onClick={() => goToPage(Page - 1, "get")} disabled={Page === 1}>
+                                                    <BsChevronLeft color='black' />
+                                                </button>
+
+                                            </li>
+                                            <li>
+                                                <div className="input-group">
+                                                    <input
+                                                        type="text"
+                                                        id="page-field2"
+                                                        className="form-control smaller-width"
+                                                        onChange={(e) => goToPage(e.target.value, "set")}
+                                                        value={Page}
+                                                    />
+                                                    <button class="btn btn-outline-secondary span-border" onClick={() => goToPage(Page, "get")} type="button" style={{ borderColor: "#dee2e6" }}>Go</button>
+                                                    <div className="input-group-append">
+                                                        <span className="input-group-text">of {totalPages}</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <button className={`page-item round-button ${Page === totalPages ? 'disabled' : ''}`} onClick={() => goToPage(Page + 1, "get")} disabled={Page === totalPages}>
+                                                <BsChevronRight color='black' />
+                                            </button>
+
+
+                                        </ul>
+
+                                    </nav>
+                                </div>
+
+
+                            </div>
+
+                        </section>
+
+                        <Modal show={showAdd} onHide={handleCloseAdd} centered backdrop="static" className="custom-square-modal" >
+                            <Modal.Header closeButton>
+                                <Modal.Title>Register User</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Form onSubmit={handleFormSubmit} className="custom-form-size">
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>User Name</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            value={formData.email}
+                                            onChange={(e) => handleChange('email', e.target.value)}
+                                            onBlur={() => handleBlur('email')}
+                                            placeholder="Enter user name"
+                                            isInvalid={touchedFields.email && !!errors.email}
+                                            required
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.email}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Password</Form.Label>
+                                        <Form.Control
+                                            type="password"
+                                            value={formData.password}
+                                            onChange={(e) => handleChange('password', e.target.value)}
+                                            onBlur={() => handleBlur('password')}
+                                            placeholder="Enter password"
+                                            isInvalid={touchedFields.password && !!errors.password}
+                                            required
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.password}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>User Role</Form.Label>
+                                        <MultiSelect
+                                            // options={roleArray}
+                                            options={roleArray.map(role => ({ label: role.role, value: role.permission }))}
+                                            value={formData.roles}
+                                            onChange={(selected) => handleChange('roles', selected)}
+                                            onBlur={() => handleBlur('roles')}
+                                            labelledBy="Select Role"
+                                        />
+                                        {touchedFields.roles && errors.roles && (
+                                            <div className="text-danger">{errors.roles}</div>
+                                        )}
+                                    </Form.Group>
+
+                                    <div className="text-center">
+                                        <button
+                                            className="search btn idp-btn-outline-primary mx-1 search_button"
+                                            type="submit"
+                                            disabled={!isFormValid}
+                                        >
+                                            Submit
+                                        </button>
+                                    </div>
+                                </Form>
+                            </Modal.Body>
+                        </Modal>
+
+
+                    </div>
+                </div>
+            </main>
+
+            <Footer />
+
+            <ToastContainer />
+        </>
+    );
+
+
+};
+export default UserRoleGrid;

@@ -1,0 +1,250 @@
+const stringArray=Object.roles.map(role=>role.value).join(', ')
+
+
+
+
+
+  const handleUserRole = async (roleArray, currentPage, recordsCount, recordsPerPage) => {
+        if (search_value === "") {
+            setLoading(true);
+            const endpoint = `${"get_all_users_data/"}`;
+            try {
+                const token = localStorage.getItem('token');
+                // Fetch data from the API
+                const response = await FetchData(endpoint, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `${token}`, // Correct format for token
+                    },
+                });
+
+                // const products = await response;
+                // Simulating with dummy data for testing
+                // const products = { data: dummyUsers }; // for dummy data
+                const products = {
+                    data: [{
+                        email: "Kiran",
+                        roles: [
+                            { role: "Song Inputter", permission: true },
+                            { role: "Song Approver", permission: false },
+                            { role: "Song Checker", permission: false },
+                            { role: "Member Inputter", permission: false },
+                            { role: "Member Approver", permission: true },
+                            { role: "Member Checker", permission: false },
+                            { role: "Cleansing Checker", permission: false },
+                            { role: "Cleansing Approver", permission: false },
+                            { role: "Cleansing Inputter", permission: false },
+                            { role: "Admin", permission: false }
+                        ]
+                    },
+                    {
+                        email: "Kiran",
+                        roles: [
+                            { role: "Song Inputter", permission: false },
+                            { role: "Song Approver", permission: false },
+                            { role: "Song Checker", permission: false },
+                            { role: "Member Inputter", permission: false },
+                            { role: "Member Approver", permission: false },
+                            { role: "Member Checker", permission: false },
+                            { role: "Cleansing Checker", permission: false },
+                            { role: "Cleansing Approver", permission: false },
+                            { role: "Cleansing Inputter", permission: false },
+                            { role: "Admin", permission: true }
+                        ]
+                    }],
+                    count: 20
+                }
+
+                let a = [{
+                    email: "kiran",
+                    role: [{ song_inputter: true },
+                    { song_approver: false },
+                    { song_checker: false },
+                    { member_inputter: false },
+                    { member_approver: false },
+                    { member_checker: false },
+                    { cleansing_checker: false },
+                    { cleansing_approver: false },
+                    { cleansing_inputter: false },
+                    { admin: false }
+                    ]
+                }]
+                const updated_data = a.map((rows, index) => ({
+                    ...rows,
+                    role: rows.role.map((r, index) => ({
+                        row_id: createId(),
+                        user_role: Object.keys(rows.role[index])[0],
+                        permission: Object.values(rows.role[index])[0]
+                    }))
+                }))
+                console.log(updated_data)
+
+                if (products.data.length === 0) {
+                    setLoading(false);
+                    setProducts([]);
+                } else {
+                    let getProduct = updated_data.map((row) => ({
+                        ...row,
+                        id: createId(),
+                    }));
+                    // setRoleArray(getProduct); // Set role array with the returned data
+                    setCurrentPage(currentPage);
+                    // setRecordsCount(products.count)
+                    setRecordsCount(products.count);                                      //harcoded count
+                    setPage(currentPage);
+                    setLoading(false);
+                    setSearchValue("");
+                    setRecordsPerPage(recordsCount)
+                    setRegistered_user(getProduct)
+                    // Clear search input field
+                    const name = document.getElementById('search_text');
+                    if (name) {
+                        name.value = "";
+                    }
+                }
+            } catch (error) {
+                // Handle errors during fetch
+                console.error('Error fetching updated role', error);
+                setLoading(false); // Ensure loading state is reset on error
+            }
+        }
+        else if (search_value !== "") (
+            searchProduct(search_value, roleArray, currentPage, recordsPerPage)
+        )
+    };
+
+
+
+
+ const sendEditedData = (user_id) => {
+        let updated_data = registered_user.filter((row) => row.id === user_id);
+        let checked_product = updated_data[0].role.map((rows) => ({
+            [rows.user_role]: rows.permission
+        }))
+        updated_data[0].role = checked_product
+        console.log(updated_data)
+    }
+=================================================================
+
+
+
+
+    // const handleUserRole = async (roleArray, currentPage, recordsPerPage) => {
+    //     if (search_value === "") {
+    //         setLoading(true);
+    //         const current_page = encodeURIComponent(currentPage)
+    //         const endpoint = `${"get_all_users_data/"}?param1=${""}&param2=${current_page}&param3=${recordsPerPage}`
+
+    //         try {
+    //             const token = localStorage.getItem('token');
+    //             // Fetch data from the API
+    //             const response = await FetchData(endpoint, {
+    //                 method: 'GET',
+    //                 headers: {
+    //                     'Authorization': `${token}`, // Correct format for token
+    //                 },
+    //             });
+
+    //             const products = await response;
+    //             // Simulating with dummy data for testing
+    //             // const products = { data: dummyUsers }; // for dummy data
+
+    //             const roleArray = Object.keys(products.data[0].roles[0]).map(role => ({
+    //                 role: role,
+    //                 permission: role
+    //             }));
+    //             setRoleArray(roleArray);
+    //             console.log("role array", roleArray)
+
+    //             const updated_data = products.data.map((rows) => ({
+    //                 ...rows,
+    //                 roles: Object.entries(rows.roles[0]).map(([role, permission]) => ({
+    //                     row_id: createId(),
+    //                     user_role: role,
+    //                     permission: permission
+    //                 }))
+    //             }));
+
+    //             if (products.data.length === 0) {
+    //                 setLoading(false);
+    //                 setProducts([]);
+    //             } else {
+    //                 let getProduct = updated_data.map((row) => ({
+    //                     ...row,
+    //                     id: createId(),
+    //                 }));
+    //                 // setRoleArray(getProduct); // Set role array with the returned data
+    //                 setCurrentPage(currentPage);
+
+    //                 setRecordsCount(products.count);
+    //                 setPage(currentPage);
+    //                 setLoading(false);
+    //                 setSearchValue("");
+    //                 setRecordsPerPage(recordsPerPage)
+    //                 setRegistered_user(getProduct)
+
+    //                 let startingSerialNumber = ((currentPage - 1) * recordsPerPage) + 1;
+    //                 let productsWithSerialNumbers = getProduct.map((data, index) => ({
+    //                     SR_NO: startingSerialNumber + index,
+    //                     ...data
+    //                 }));
+    //                 setRegistered_user(productsWithSerialNumbers);
+
+    //                 // const name = document.getElementById('search_text');
+    //                 // if (name) {
+    //                 //     name.value = "";
+    //                 // }
+    //             }
+    //         } catch (error) {
+    //             // Handle errors during fetch
+    //             console.error('Error fetching updated role', error);
+    //             setLoading(false); // Ensure loading state is reset on error
+    //         }
+    //     }
+    //     // else if (search_value !== "") (
+    //     //     searchProduct(search_value, currentPage, recordsPerPage)
+    //     // )
+    // };
+
+
+
+
+
+
+
+
+================================================================
+
+
+    // const handleCheckboxChange = (rowId, userEmail, roleValue, ids) => {
+    //     const updated_data = registered_user.map((row) =>
+    //         row.id === rowId ? {
+    //             ...row,
+    //             roles: row.roles.map((role, index) =>
+    //                 index === ids ? {
+    //                     ...role,
+    //                     permission: !role.permission // Toggle the permission value
+    //                 } : role
+    //             )
+    //         } : row
+    //     );
+
+    //     setRegistered_user(updated_data);
+    // };
+
+
+
+
+    // const sendEditedData = (user_id) => {
+    //     let updated_data = registered_user.filter((row) => row.id === user_id);
+
+
+    //     let checked_product = updated_data[0].roles.map((rows) => ({
+    //         [rows.user_role]: rows.permission
+    //     }))
+    //     updated_data[0].roles = checked_product
+    //     console.log(updated_data)
+
+    //     handleUpdateRole(updated_data[0].id, updated_data[0].email, updated_data[0].roles);
+    //     // handleUpdateRole(updated_data.id, updated_data.email, updated_data.roles);  
+    // }
