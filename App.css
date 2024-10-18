@@ -1,87 +1,40 @@
-
-
-.background-container {
-  background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20220112/pngtree-glass-morphim-effect-registration-banner-with-gradient-blue-image_934693.jpg'); 
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-family: Arial, sans-serif;
-}
-
-.form-container {
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  max-width: 100%;
-}
-
-.header {
-  font-size: 1.5em;
-  margin-bottom: 10px;
+.App {
   text-align: center;
-  color: #333;
 }
 
-.form-group {
-  margin-bottom: 15px;
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
 }
 
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1em;
-}
-
-.form-group .radio-group {
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
   display: flex;
-  justify-content: space-around;
-}
-
-.form-group .radio-group label {
-  margin: 0;
-}
-
-.form-group input[type="radio"] {
-  margin-right: 5px;
-}
-
-.form-group .error {
-  color: red;
-  font-size: 0.875em;
-  margin-top: 5px;
-}
-
-button[type="submit"] {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #61dafb;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
   color: white;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s;
 }
 
-button[type="submit"]:disabled {
-  background-color: #ccc;
+.App-link {
+  color: #61dafb;
 }
 
-button[type="submit"]:not(:disabled):hover {
-  background-color: #21a1f1;
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
+
+
